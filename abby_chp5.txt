@@ -1,3 +1,6 @@
 These are my notes about chapter 5....
+In chapter 5 we learned about why version control is important!
+We want to use versions of our scripts and files as an electronic lab notebook. This makes our work reproducible! :)
+
 
 
