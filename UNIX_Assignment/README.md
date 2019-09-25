@@ -105,7 +105,7 @@ This made the file with the SNPs with unknown positions.
 awk '$2 =="multiple"' maize_join.txt > maize_multiple.txt
 ```
 
-This made the file with the SNPs with multiple positions. Now I should clean up my directory by removing my intermediate files created from pulling out the data from maize\_join.txt into individual files. For teosinte individuals I will try to use a pipe to eliminate making these intermediate files.
+This made the file containing the SNPs with multiple positions. Now I should clean up my directory by removing my intermediate files created from pulling out the data from maize\_join.txt into individual files. For teosinte individuals I will try to use a pipe to eliminate making these intermediate files.
 
 ###Step 3: Teosinte Data Processing
 
