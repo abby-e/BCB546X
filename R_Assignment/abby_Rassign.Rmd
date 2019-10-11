@@ -1,0 +1,133 @@
+---
+title: "abby_Rassign"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Inspection
+
+This bit of code reads in the fang genotypes file from the UNIX assignment.
+```{r}
+fang <- read.delim('fang_et_al_genotypes.txt', header = TRUE, sep= "\t")
+```
+
+Next I read in the snp position file.
+```{r}
+snp_position <- read.delim('snp_position.txt', header = TRUE, sep= "\t")
+```
+
+To inspect these files I tried several different commands.
+
+The following provides all of the columm names for both data frames.
+```{r}
+names(fang)
+names(snp_position)
+```
+
+'fang' has 986 columns and 'snp_position' has 15 columns. This information is also available in the environment tab.
+
+The following provides more information than names() does.
+```{r}
+str(fang)
+str(snp_position)
+```
+
+This command displays the levels of each variable. For example, the Sample_ID column is a factor with 2782 levels, which makes sense because these should all be unique. Group has 16 levels. Interestingly, in the snp_position, Position is a factor, and not a numeric data type.
+
+## Data Processing
+
+First, I need to transpose the fang file. 
+
+```{r}
+fang_transposed <- t(fang)
+```
+
+The output has renamed all of the columns as V1, V2, V3, etc. This isn't really a problem, except now I will be searching within the Group row in order to find the maize and teosinte genotypes.It might be easier to transpose the results after filtering the data based on teosinte or maize groups first.
+
+```{r}
+maize <- filter(fang, Group %in% c('ZMMMR','ZMMIL', 'ZMMLR'))
+teosinte <- filter(fang, Group %in% c('ZMPBA', 'ZMPIL', 'ZMPJA'))
+```
+
+Transposing both of these data frames results in a matrix.
+
+```{r}
+maize_t <- t(maize)
+teosinte_t <- t(teosinte)
+```
+
+The first three rows of each transposed matrix need to be removed before joining with the SNP Position data frame.
+
+```{r}
+teosinte_t <- teosinte_t[-1:-3,]
+maize_t <- maize_t[-1:-3,]
+```
+
+I next only selected the relevant columns from SNP_Position.txt.
+
+```{r}
+snp_working <- select(snp_position, SNP_ID, Chromosome, Position)
+```
+
+I assigned the values in the first column of snp_working to the row names.
+
+```{r}
+rownames(snp_working) <- snp_working[,1]
+snp_working[,1] <- NULL
+```
+
+Now I will join snp_working and the transposed maize and teosinte files.
+
+```{r}
+teosinte_t <- as.data.frame(teosinte_t)             #first make sure that the transposed matrices behave like data frames
+maize_t <- as.data.frame(maize_t)
+maize_final <- merge(snp_working, maize_t, by="row.names")
+teosinte_final <- merge(snp_working, teosinte_t, by="row.names")
+```
+
+Now I am ready to sort the final data frames and create the output files.
+
+```{r}
+setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X")
+setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X/R_assignment")
+```
+
+
+```{unix}
+mkdir maize
+mkdir teosinte
+```
+
+```{r}
+setwd("maize")
+```
+
+```{r}
+maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 2) %>% write.table("maize_chr2_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+```
+
+```{r}
+setwd("C:/Users/Abby Schaefer/Documents/abby_bds")
+setwd("teosinte")
+```
+
+```{r}
+teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 10) %>% write.table("teosinte_chr10_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+The nice thing about R is that I can create any variable or object that I want in my local environment and only save the final result to my project file.
+
