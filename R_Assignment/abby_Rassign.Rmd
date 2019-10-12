@@ -7,6 +7,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X/UNIX_Assignment")
+library(tidyverse)
+```
+
+I will also note that the working directory of the terminal must also be the UNIX_Assignment folder.
+
 ## Data Inspection
 
 This bit of code reads in the fang genotypes file from the UNIX assignment.
@@ -92,11 +99,18 @@ Now I am ready to sort the final data frames and create the output files.
 
 ```{r}
 setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X")
+
+```
+
+```{r}
 setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X/R_assignment")
 ```
 
 
+
 ```{unix}
+cd ..
+cd R_Assignment
 mkdir maize
 mkdir teosinte
 ```
@@ -106,8 +120,16 @@ setwd("maize")
 ```
 
 ```{r}
-maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 2) %>% write.table("maize_chr2_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
 ```
+
+```{r}
+maize_final %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 10) %>% write.table("maize_chr1_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+```
+
+
+Again, the working directory of the terminal must also be set to the maize folder.
+
 
 ```{r}
 setwd("C:/Users/Abby Schaefer/Documents/abby_bds")
@@ -115,7 +137,7 @@ setwd("teosinte")
 ```
 
 ```{r}
-teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 10) %>% write.table("teosinte_chr10_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
 ```
 
 ## Including Plots
