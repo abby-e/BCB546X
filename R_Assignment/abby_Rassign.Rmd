@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X/UNIX_Assignment")
+setwd("../abby_546X/UNIX_Assignment")
 library(tidyverse)
 ```
 
@@ -98,12 +98,12 @@ teosinte_final <- merge(snp_working, teosinte_t, by="row.names")
 Now I am ready to sort the final data frames and create the output files.
 
 ```{r}
-setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X")
+setwd("../abby_546X")
 
 ```
 
 ```{r}
-setwd("C:/Users/Abby Schaefer/Documents/R/abby_546X/R_assignment")
+setwd("../abby_546X/R_assignment")
 ```
 
 
@@ -132,12 +132,27 @@ Again, the working directory of the terminal must also be set to the maize folde
 
 
 ```{r}
-setwd("C:/Users/Abby Schaefer/Documents/abby_bds")
 setwd("teosinte")
 ```
 
 ```{r}
 teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+```
+
+Now I will replace the '?' values with '-' instead.
+
+```{r}
+teosinte2 <- data.frame(lapply(teosinte_final, as.character), stringsAsFactors=FALSE)
+teosinte2 <- sapply(teosinte2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
+teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+
+```
+
+```{r}
+maize2 <- data.frame(lapply(maize_final, as.character), stringsAsFactors=FALSE)
+maize2 <- sapply(maize2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
+maize2 <- as.data.frame(maize2)
+maize2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
 ```
 
 ## Including Plots
