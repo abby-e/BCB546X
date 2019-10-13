@@ -95,15 +95,6 @@ maize_final <- merge(snp_working, maize_t, by="row.names")
 teosinte_final <- merge(snp_working, teosinte_t, by="row.names")
 ```
 
-The next line creates the plot with the number of SNPs on each chromosome.
-```{r}
-ggplot(data = plot_gen_final) + geom_bar(mapping=aes(x=Chromosome))
-```
-
-The next plot is the distribution of SNPs on each chromosome.
-```{r}
-ggplot(data = plot_gen_final) + geom_density(mapping=aes(x=Chromosome))
-```
 
 Now I am ready to sort the final data frames and create the output files.
 
@@ -180,16 +171,38 @@ I need to combine both teosinte and maize. (Homework instructions were vague.)
 ```{r}
 plot_genotypes <- filter(fang, Group %in% c('ZMMMR','ZMMIL', 'ZMMLR', 'ZMPBA', 'ZMPIL', 'ZMPJA'))
 ggplot(data = plot_genotypes) + geom_bar(mapping=aes(x=Group)) #This is my plot of choice.
-t_plot_genotypes <- t(plot_genotypes)
-t_plot_genotypes <- t_plot_genotypes[-1:-3,]
-plot_gen_final <- merge(snp_working, t_plot_genotypes, by="row.names")
+
+
+
 ```
 
 ```{r}
+t_plot_genotypes <- t(plot_genotypes)
+t_plot_genotypes <- t_plot_genotypes[-1:-3,]
+plot_gen_final <- merge(snp_working, t_plot_genotypes, by="row.names")
+
 ggplot(data = plot_gen_final) + geom_bar(mapping=aes(x=Chromosome))
+
+```
+
+```{r}
 ggplot(data = plot_gen_final) + geom_density(mapping=aes(x=Chromosome))
 
 ```
+
+
+
+
+```{r}
+lookup <- c(("?/?"=0, /A", "A/C", "A/G", "A/T", "C/C", "C/G", "C/T", "G/G", "G/T", "T/T")
+levels(plot_gen_final$V1)
+find <- levels(plot_gen_final$V1)
+```
+
+
+
+
+```{r}
 
 
 You can also embed plots, for example:
