@@ -145,6 +145,7 @@ Now I will replace the '?' values with '-' instead.
 ```{r}
 teosinte2 <- data.frame(lapply(teosinte_final, as.character), stringsAsFactors=FALSE)
 teosinte2 <- sapply(teosinte2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
+teosinte2 <- as.data.frame(teosinte2)
 teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
 
 ```
@@ -201,7 +202,7 @@ iter = 0 #Initialized an iterator I ended up not using
 tempCol = c(NULL) #Initialize new percentage column
 tempCol2 = c(NULL) #Initialize missing value column
 
-for (col in colnames(test_gen_final)) { #Iterates through columns of tDatFram dataframe
+for (col in colnames(test_gen_final)) { #Iterates through columns of dataframe
   iter <- iter + 1 #The unused iterator iterating
   tempName <- as.name(paste(c(newColNameIni,toString(iter)),collapse="")) #Naming new column
   tempCol = c(NULL) #Initialize column to be added
@@ -241,10 +242,18 @@ for (row in rownames(test_gen_final)) { #Iterate through dataframe rows
 test_gen_final$Percent <- tempCol #Add percentage column
 test_gen_final$Missing <- tempCol #Add missing data column
 
-##Graph
-barplot(test_gen_final$Percent, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Homozygous Alleles")
+
 
 ```
+
+
+
+```{r}
+##Graph
+barplot(test_gen_final$Percent, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Homozygous Alleles")
+```
+
+
 
 ```{r}
 barplot(test_gen_final$Missing, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Missing Data")
