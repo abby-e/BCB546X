@@ -189,30 +189,67 @@ ggplot(data = plot_gen_final) + geom_bar(mapping=aes(x=Chromosome))
 ggplot(data = plot_gen_final) + geom_density(mapping=aes(x=Chromosome))
 
 ```
-
-
-
-
 ```{r}
-lookup <- c(("?/?"=0, /A", "A/C", "A/G", "A/T", "C/C", "C/G", "C/T", "G/G", "G/T", "T/T")
-levels(plot_gen_final$V1)
-find <- levels(plot_gen_final$V1)
+test_gen_final <- plot_gen_final
 ```
 
 
 
-
 ```{r}
+newColNameIni = "B"
+iter = 0 #Initialized an iterator I ended up not using
+tempCol = c(NULL) #Initialize new percentage column
+tempCol2 = c(NULL) #Initialize missing value column
 
+for (col in colnames(test_gen_final)) { #Iterates through columns of tDatFram dataframe
+  iter <- iter + 1 #The unused iterator iterating
+  tempName <- as.name(paste(c(newColNameIni,toString(iter)),collapse="")) #Naming new column
+  tempCol = c(NULL) #Initialize column to be added
+  for (row in rownames(test_gen_final)) { #Iterates through rows of tDatFram dataframe
+    tempString <- toString(test_gen_final[row,col]) #Converts tDatFrame values to true string
+    tempVal <- "Heterozygous" #Assumes heterozygous
+    if (substring(tempString,1,1) == "?") { #If loop comparing SNP nts
+      tempVal <- "NA" #Changes to NA if missing value
+    }
+    else if (substring(tempString,1,1) == substring(tempString,3,3)) { #If loop comparing SNP nts
+      tempVal <- "Homozygous" #Changes to homozygous if if loop true
+    }
+    tempCol = c(tempCol,tempVal) #Adds to the column to be added
+  }
+  test_gen_final[[tempName]] <- tempCol #Adds column with new name
+}
 
-You can also embed plots, for example:
+##Determining the percent homozygous
+tempCol = c(NULL) #Initialize new percentage column
+tempCol2 = c(NULL) #Initialize missing value column
+for (row in rownames(test_gen_final)) { #Iterate through dataframe rows
+  countTot = 0 #Initialize total count
+  countHom = 0 #Initialize homozygous count
+  countNA = 0 #Initialize missing count
+  for (iterB in 1:iter) { #Iterate through the columns added previously
+    countTot <- countTot + 1 #Always increment total counter
+    if (test_gen_final[row,paste(c(newColNameIni,toString(iterB)),collapse="")]=="Homozygous") { #Ask if homozygous
+      countHom <- countHom + 1 #Increment homozygous count if homozygous
+    }
+    else if (test_gen_final[row,paste(c(newColNameIni,toString(iterB)),collapse="")]=="NA") { #Ask if missing
+      countNA <- countNA + 1 #Increment missing count if missing
+    }
+  }
+  tempCol <-c(tempCol, countHom/countTot) #Save ratio to percentage column
+  tempCol2 <-c(tempCol2, countNA/countTot) #Save missing percentage to a new column
+}
+test_gen_final$Percent <- tempCol #Add percentage column
+test_gen_final$Missing <- tempCol #Add missing data column
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+##Graph
+barplot(test_gen_final$Percent, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Homozygous Alleles")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+barplot(test_gen_final$Missing, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Missing Data")
+```
 
 
-The nice thing about R is that I can create any variable or object that I want in my local environment and only save the final result to my project file.
+
 
