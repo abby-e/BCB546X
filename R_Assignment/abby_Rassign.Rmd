@@ -7,6 +7,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+Make sure to set the working directory from the command line.
 ```{r}
 setwd("./UNIX_Assignment")
 library(tidyverse)
@@ -21,7 +23,7 @@ This bit of code reads in the fang genotypes file from the UNIX assignment. It h
 fang <- read.delim('fang_et_al_genotypes.txt', header = TRUE, sep= "\t")
 ```
 
-Next I read in the snp position file, also from the command line.
+Next I read in the snp position file, also from the command line. This also must be executed from the command line.
 ```{r}
 snp_position <- read.delim('snp_position.txt', header = TRUE, sep= "\t")
 ```
@@ -69,7 +71,7 @@ teosinte_t <- filter(fang, Group %in% c('ZMPBA', 'ZMPIL', 'ZMPJA')) %>%
 ```
 
 
-I next only selected the relevant columns from SNP_Position.txt.
+Next I only selected the relevant columns from SNP_Position.txt.
 
 ```{r}
 snp_working <- select(snp_position, SNP_ID, Chromosome, Position)
@@ -99,7 +101,7 @@ maize_final %>% rename("SNP_ID" = Row.names)
 ```
 
 
-Now I am ready to sort the final data frames and create the output files.
+Now I am ready to sort the final data frames and create the output files. Make sure to change the working directory from the command line.
 
 ```{r}
 setwd("./abby_546X")
@@ -112,17 +114,17 @@ setwd("./abby_546X/R_assignment")
 
 
 ```{r}
-setwd("maize")
+setwd("./maize")
 ```
 
 Change the next bit of script as needed to make 10 files for each chromosome.
 ```{r}
-maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 Change the next bit of script as needed to make 10 files for each chromosome.
 ```{r}
-maize_final %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 10) %>% write.table("maize_chr1_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+maize_final %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 10) %>% write.table("maize_chr1_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 
@@ -134,7 +136,7 @@ setwd("teosinte")
 ```
 
 ```{r}
-teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 Now I will replace the '?' values with '-' instead.
