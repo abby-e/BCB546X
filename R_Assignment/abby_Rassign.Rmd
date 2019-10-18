@@ -119,12 +119,7 @@ setwd("./maize")
 
 Change the next bit of script as needed to make 10 files for each chromosome.
 ```{r}
-maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
-```
-
-Change the next bit of script as needed to make 10 files for each chromosome.
-```{r}
-maize_final %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 10) %>% write.table("maize_chr1_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 1) %>% write.table("maize_chr1_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 
@@ -132,11 +127,11 @@ Again, the working directory of the terminal must also be set to the maize folde
 
 
 ```{r}
-setwd("teosinte")
+setwd("./teosinte")
 ```
 
 ```{r}
-teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 2) %>% write.table("teosinte_chr2_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 Now I will replace the '?' values with '-' instead.
@@ -145,7 +140,7 @@ Now I will replace the '?' values with '-' instead.
 teosinte2 <- data.frame(lapply(teosinte_final, as.character), stringsAsFactors=FALSE)
 teosinte2 <- sapply(teosinte2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
 teosinte2 <- as.data.frame(teosinte2)
-teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 
 ```
 
@@ -153,7 +148,7 @@ teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>
 maize2 <- data.frame(lapply(maize_final, as.character), stringsAsFactors=FALSE)
 maize2 <- sapply(maize2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
 maize2 <- as.data.frame(maize2)
-maize2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE)
+maize2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 ```
 
 ## Data Visualization
@@ -180,7 +175,7 @@ ggplot(data=maize_tidy, aes(x=Geno)) + geom_bar() + facet_wrap(~ Chromosome)
 ```
 
 
-Now I will make the data tidy.
+
 ```{r}
 maize_tidy <- mutate(maize_tidy, Bin_Geno = ifelse(grepl("A/A", Geno), "homozygous",
                                       ifelse(grepl("C/C", Geno), "homozygous",
