@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Make sure to set the working directory from the command line.
 ```{r}
-setwd("./UNIX_Assignment")
+setwd("./R_Assignment")
 library(tidyverse)
 ```
 
@@ -30,10 +30,14 @@ snp_position <- read.delim('snp_position.txt', header = TRUE, sep= "\t")
 
 To inspect these files I tried several different commands.
 
-The following provides all of the columm names for both data frames.
+The following provides all of the columm names for both data frames as well as the number of rows and columns for each file.
 ```{r}
 names(fang)
 names(snp_position)
+nrow(fang)
+nrow(snp_position)
+ncol(fang)
+ncol(snp_position)
 ```
 
 'fang' has 986 columns and 'snp_position' has 15 columns. This information is also available in the environment tab.
@@ -204,23 +208,25 @@ teosinte_tidy <- mutate(teosinte_tidy, Bin_Geno = ifelse(grepl("A/A", Geno), "ho
 ```
 
 
+I made these two for fun.
 ```{r}
 ggplot(data = maize_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
-
-```
-
-```{r}
 ggplot(data = teosinte_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
 
 ```
 
+
+This makes the density plots and number of snps per chromosome.
 ```{r}
-ggplot(data = maize_tidy) + geom_density(mapping=aes(x=Chromosome))
-       
+ggplot(maize_tidy,aes(x=as.numeric(Chromosome))) + geom_histogram(bins=12, aes(fill =Chromosome))
+ggplot(teosinte_tidy,aes(x=as.numeric(Chromosome))) + geom_histogram(bins=12, aes(fill =Chromosome))
+
 ```
+
 
 ```{r}
 ggplot(data = teosinte_tidy) + geom_density(mapping=aes(x=Chromosome))
+ggplot(data = maize_tidy) + geom_density(mapping=aes(x=Chromosome))
        
 ```
 
