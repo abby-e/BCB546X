@@ -1,0 +1,25 @@
+#### General
+Your code looks great and you have a well organised R Markdown file. 
+By the look of things, you exploited all the functions learnt in class to inspect your data and very well described it
+A few issues, though.
+Your code runs smoothly up to the end of part 1(Data inspection)
+The first error is 
+"Error in filter(fang, Group %in% c("ZMMLR", "ZMMMR", "ZMMIL")) %>% select(-JG_OTU,  :   could not find function "%>%"", 
+
+it looks like you did not load an appropriate script or if you did, it is absent in the Markdown file 
+and it is not available to me when i run your code
+Becasue of this error, nonthing runs beyond this point
+
+You did a great job explaining the functions of the codes you used, and i think it will also be great to say something about 
+the graphs that you generated, e.g how homozygosity/homozygosity relates to SNPS data.
+For example talk about group of SNPs that seem not to have heterozygous alleles.
+
+##### Part II
+I didnot see graphs for this section although the codes were written and icluded in the `Markdown` file Maybe the you forgot to commit them, I guess.
+Again, careful verification of the staged files for commiting is very much needed.
+
+####  File Organization and storage
+Also the text files formats could be somewhat improved for visualization and trackable. 
+The question asked to group the files based on increasing and decreasing SNP position values thus separate folders for each of 
+the outputs would make the work more neat. 
+I would create folders for maize and Teosinte and in each subfolders to keep text files based on increasing and decreasing SNP position values.  
