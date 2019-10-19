@@ -18,8 +18,4 @@ For example talk about group of SNPs that seem not to have heterozygous alleles.
 I didnot see graphs for this section although the codes were written and icluded in the `Markdown` file Maybe the you forgot to commit them, I guess.
 Again, careful verification of the staged files for commiting is very much needed.
 
-####  File Organization and storage
-Also the text files formats could be somewhat improved for visualization and trackable. 
-The question asked to group the files based on increasing and decreasing SNP position values thus separate folders for each of 
-the outputs would make the work more neat. 
-I would create folders for maize and Teosinte and in each subfolders to keep text files based on increasing and decreasing SNP position values.  
+  
