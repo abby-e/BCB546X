@@ -8,13 +8,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-Make sure to set the working directory from the command line.
+Make sure to set the working directory from the console. You should also load tidyverse in the command line so it is available for all code chunks.
 ```{r}
 setwd("./R_Assignment")
 library(tidyverse)
 ```
 
-I will also note that the working directory of the terminal must also be the UNIX_Assignment folder.
+I will also note that the working directory of the terminal must also be the R_Assignment folder.
 
 ## Data Inspection
 
@@ -229,6 +229,7 @@ ggplot(data = teosinte_tidy) + geom_density(mapping=aes(x=Chromosome))
 ggplot(data = maize_tidy) + geom_density(mapping=aes(x=Chromosome))
        
 ```
+
 
 ```{r}
 ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno), position = "fill")
