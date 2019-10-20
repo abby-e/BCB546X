@@ -219,7 +219,7 @@ ggplot(data = teosinte_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
 This makes the density plots and number of snps per chromosome.
 ```{r}
 ggplot(maize_tidy,aes(x=as.numeric(Chromosome))) + geom_histogram(bins=12, aes(fill =Chromosome))
-ggplot(teosinte_tidy,aes(x=as.numeric(Chromosome))) + geom_histogram(bins=12, aes(fill =Chromosome))
+
 
 ```
 
