@@ -8,10 +8,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-Make sure to set the working directory from the console. You should also load tidyverse in the command line so it is available for all code chunks.
 ```{r}
-setwd("./R_Assignment")
 library(tidyverse)
+```
+
+Check that the working directory is the R_Assignment folder.
+```{r}
+getwd()
 ```
 
 I will also note that the working directory of the terminal must also be the R_Assignment folder.
@@ -23,7 +26,7 @@ This bit of code reads in the fang genotypes file from the UNIX assignment. It h
 fang <- read.delim('fang_et_al_genotypes.txt', header = TRUE, sep= "\t")
 ```
 
-Next I read in the snp position file, also from the command line. This also must be executed from the command line.
+Next I read in the snp position file.
 ```{r}
 snp_position <- read.delim('snp_position.txt', header = TRUE, sep= "\t")
 ```
@@ -59,6 +62,8 @@ fang_transposed <- t(fang)
 ```
 
 The output has renamed all of the columns as V1, V2, V3, etc. This isn't really a problem, except now I will be searching within the Group row in order to find the maize and teosinte genotypes.It might be easier to transpose the results after filtering the data based on teosinte or maize groups first.
+
+I got a comment that the below line of code would not run, possibly due to an issue that my above library(tidyverse) command was not functioning properly, but I have been able to run it with no issues and after closing and reopening my R environment to clear loaded packages.I self-confirmed that my reviewer likely did not run the load tidyverse command above, because I was able to recreate the error by trying the command below before loading tidyverse in a fresh R environment.
 
 ```{r}
 maize_t <- filter(fang, Group %in% c("ZMMLR", "ZMMMR", "ZMMIL")) %>%
@@ -144,7 +149,7 @@ Now I will replace the '?' values with '-' instead.
 teosinte2 <- data.frame(lapply(teosinte_final, as.character), stringsAsFactors=FALSE)
 teosinte2 <- sapply(teosinte2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
 teosinte2 <- as.data.frame(teosinte2)
-teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("teosinte_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 8) %>% write.table("teosinte_chr8_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
 
 ```
 
@@ -176,6 +181,7 @@ plot_genotypes <- filter(fang, Group %in% c('ZMMMR','ZMMIL', 'ZMMLR', 'ZMPBA', '
 
 ggplot(data = plot_genotypes) + geom_bar(mapping=aes(x=Group)) #This is my plot of choice.
 ggplot(data=maize_tidy, aes(x=Geno)) + geom_bar() + facet_wrap(~ Chromosome)
+
 ```
 
 
@@ -217,12 +223,6 @@ ggplot(data = teosinte_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
 
 
 This makes the density plots and number of snps per chromosome.
-```{r}
-ggplot(maize_tidy,aes(x=as.numeric(Chromosome))) + geom_histogram(bins=12, aes(fill =Chromosome))
-
-
-```
-
 
 ```{r}
 ggplot(data = teosinte_tidy) + geom_density(mapping=aes(x=Chromosome))
@@ -230,7 +230,7 @@ ggplot(data = maize_tidy) + geom_density(mapping=aes(x=Chromosome))
        
 ```
 
-
+The next two plot the proportion of heterozygous, homozygous, and missing samples on each chromosome.
 ```{r}
 ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno), position = "fill")
 ```
@@ -239,6 +239,7 @@ ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno),
 ggplot(data=teosinte_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno), position = "fill")
 ```
 
+The next two plots show the proportion of heterozygous, homozygous, and missing SNPs in each sample.
 ```{r}
 ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Sample_ID, fill = Bin_Geno), position = "fill")
 ```
