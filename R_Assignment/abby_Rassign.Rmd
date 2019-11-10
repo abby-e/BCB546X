@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "abby_Rassign"
 output: html_document
@@ -311,3 +312,318 @@ barplot(test_gen_final$Missing, names.arg = rownames(test_gen_final), xlab = "si
 
 
 
+=======
+---
+title: "abby_Rassign"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+```
+
+Check that the working directory is the R_Assignment folder.
+```{r}
+getwd()
+```
+
+I will also note that the working directory of the terminal must also be the R_Assignment folder.
+
+## Data Inspection
+
+This bit of code reads in the fang genotypes file from the UNIX assignment. It has to be executed from the command line.
+```{r}
+fang <- read.delim('fang_et_al_genotypes.txt', header = TRUE, sep= "\t")
+```
+
+Next I read in the snp position file.
+```{r}
+snp_position <- read.delim('snp_position.txt', header = TRUE, sep= "\t")
+```
+
+To inspect these files I tried several different commands.
+
+The following provides all of the columm names for both data frames as well as the number of rows and columns for each file.
+```{r}
+names(fang)
+names(snp_position)
+nrow(fang)
+nrow(snp_position)
+ncol(fang)
+ncol(snp_position)
+```
+
+'fang' has 986 columns and 'snp_position' has 15 columns. This information is also available in the environment tab.
+
+The following provides more information than names() does.
+```{r}
+str(fang)
+str(snp_position)
+```
+
+This command displays the levels of each variable. For example, the Sample_ID column is a factor with 2782 levels, which makes sense because these should all be unique. Group has 16 levels. Interestingly, in the snp_position, Position is a factor, and not a numeric data type.
+
+## Data Processing
+
+First, I need to transpose the fang file. 
+
+```{r}
+fang_transposed <- t(fang)
+```
+
+The output has renamed all of the columns as V1, V2, V3, etc. This isn't really a problem, except now I will be searching within the Group row in order to find the maize and teosinte genotypes.It might be easier to transpose the results after filtering the data based on teosinte or maize groups first.
+
+I got a comment that the below line of code would not run, possibly due to an issue that my above library(tidyverse) command was not functioning properly, but I have been able to run it with no issues and after closing and reopening my R environment to clear loaded packages.I self-confirmed that my reviewer likely did not run the load tidyverse command above, because I was able to recreate the error by trying the command below before loading tidyverse in a fresh R environment.
+
+```{r}
+maize_t <- filter(fang, Group %in% c("ZMMLR", "ZMMMR", "ZMMIL")) %>%
+    select(-JG_OTU, -Group) %>% column_to_rownames(., var = "Sample_ID") %>% t() %>%
+    as.data.frame()
+```
+
+Transposing both of these data frames results in a matrix.
+
+```{r}
+teosinte_t <- filter(fang, Group %in% c('ZMPBA', 'ZMPIL', 'ZMPJA')) %>%
+    select(-JG_OTU, -Group) %>% column_to_rownames(., var = "Sample_ID") %>% t() %>%
+    as.data.frame() 
+```
+
+
+Next I only selected the relevant columns from SNP_Position.txt.
+
+```{r}
+snp_working <- select(snp_position, SNP_ID, Chromosome, Position)
+```
+
+I assigned the values in the first column of snp_working to the row names.
+
+```{r}
+rownames(snp_working) <- snp_working[,1]
+snp_working[,1] <- NULL
+```
+
+Now I will join snp_working and the transposed maize and teosinte files.
+
+```{r}
+teosinte_t <- as.data.frame(teosinte_t)             #first make sure that the transposed matrices behave like data frames
+teosinte_final <- merge(snp_working, teosinte_t, by="row.names") 
+
+teosinte_final %>% rename("SNP_ID" = Row.names)
+```
+
+```{r}
+maize_t <- as.data.frame(maize_t)
+maize_final <- merge(snp_working, maize_t, by="row.names")
+maize_final %>% rename("SNP_ID" = Row.names)
+
+```
+
+
+Now I am ready to sort the final data frames and create the output files. Make sure to change the working directory from the command line.
+
+```{r}
+setwd("./abby_546X")
+
+```
+
+```{r}
+setwd("./abby_546X/R_assignment")
+```
+
+
+```{r}
+setwd("./maize")
+```
+
+Change the next bit of script as needed to make 10 files for each chromosome.
+```{r}
+maize_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 1) %>% write.table("maize_chr1_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+```
+
+
+Again, the working directory of the terminal must also be set to the maize folder.
+
+
+```{r}
+setwd("./teosinte")
+```
+
+```{r}
+teosinte_final %>% arrange(Chromosome, Position) %>% filter(Chromosome == 2) %>% write.table("teosinte_chr2_for.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+```
+
+Now I will replace the '?' values with '-' instead.
+
+```{r}
+teosinte2 <- data.frame(lapply(teosinte_final, as.character), stringsAsFactors=FALSE)
+teosinte2 <- sapply(teosinte2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
+teosinte2 <- as.data.frame(teosinte2)
+teosinte2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 8) %>% write.table("teosinte_chr8_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+```
+
+```{r}
+maize2 <- data.frame(lapply(maize_final, as.character), stringsAsFactors=FALSE)
+maize2 <- sapply(maize2,function(x) {x <- gsub("?","-",x,fixed=TRUE)})
+maize2 <- as.data.frame(maize2)
+maize2 %>% arrange(Chromosome, desc(Position)) %>% filter(Chromosome == 9) %>% write.table("maize_chr9_rev.txt", sep="\t",col.names = FALSE, row.names = FALSE, quote = FALSE)
+```
+
+## Data Visualization
+
+```{r}
+library(reshape2)
+melt(maize_final)
+melt(teosinte_final)
+
+#this makes the data nice for plotting and calling homozygous or heterogenous 
+maize_tidy <- maize_final %>% pivot_longer(-Row.names:-Position, names_to = "Sample_ID", values_to = "Geno") 
+teosinte_tidy <- teosinte_final %>% pivot_longer(-Row.names:-Position, names_to = "Sample_ID", values_to = "Geno")
+```
+
+
+## Including Plots
+
+I need to combine both teosinte and maize. (Homework instructions were vague.)
+```{r}
+plot_genotypes <- filter(fang, Group %in% c('ZMMMR','ZMMIL', 'ZMMLR', 'ZMPBA', 'ZMPIL', 'ZMPJA')) %>% column_to_rownames(., var = "Sample_ID") 
+
+ggplot(data = plot_genotypes) + geom_bar(mapping=aes(x=Group)) #This is my plot of choice.
+ggplot(data=maize_tidy, aes(x=Geno)) + geom_bar() + facet_wrap(~ Chromosome)
+
+```
+
+
+
+```{r}
+maize_tidy <- mutate(maize_tidy, Bin_Geno = ifelse(grepl("A/A", Geno), "homozygous",
+                                      ifelse(grepl("C/C", Geno), "homozygous",
+                                      ifelse(grepl("T/T", Geno), "homozygous",
+                                      ifelse(grepl("G/G", Geno), "homozygous",
+                                     ifelse(grepl("A/C", Geno), "heterozygous",
+                                      ifelse(grepl("A/G", Geno), "heterozygous",
+                                      ifelse(grepl("A/T", Geno), "heterozygous",
+                                      ifelse(grepl("C/G", Geno), "heterozygous",
+                                      ifelse(grepl("C/T", Geno), "heterozygous",
+                                      ifelse(grepl("G/T", Geno), "heterozygous", "missing"
+                                     )))))))))))
+
+teosinte_tidy <- mutate(teosinte_tidy, Bin_Geno = ifelse(grepl("A/A", Geno), "homozygous",
+                                      ifelse(grepl("C/C", Geno), "homozygous",
+                                      ifelse(grepl("T/T", Geno), "homozygous",
+                                      ifelse(grepl("G/G", Geno), "homozygous",
+                                     ifelse(grepl("A/C", Geno), "heterozygous",
+                                      ifelse(grepl("A/G", Geno), "heterozygous",
+                                      ifelse(grepl("A/T", Geno), "heterozygous",
+                                      ifelse(grepl("C/G", Geno), "heterozygous",
+                                      ifelse(grepl("C/T", Geno), "heterozygous",
+                                      ifelse(grepl("G/T", Geno), "heterozygous", "missing"
+                                     )))))))))))
+
+```
+
+
+I made these two for fun.
+```{r}
+ggplot(data = maize_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
+ggplot(data = teosinte_tidy) + geom_bar(mapping=aes(x=Chromosome, color = Geno))
+
+```
+
+
+This makes the density plots and number of snps per chromosome.
+
+```{r}
+ggplot(data = teosinte_tidy) + geom_density(mapping=aes(x=Chromosome))
+ggplot(data = maize_tidy) + geom_density(mapping=aes(x=Chromosome))
+       
+```
+
+The next two plot the proportion of heterozygous, homozygous, and missing samples on each chromosome.
+```{r}
+ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno), position = "fill")
+```
+
+```{r}
+ggplot(data=teosinte_tidy) + geom_bar(mapping = aes(x=Chromosome, fill = Bin_Geno), position = "fill")
+```
+
+The next two plots show the proportion of heterozygous, homozygous, and missing SNPs in each sample.
+```{r}
+ggplot(data=maize_tidy) + geom_bar(mapping = aes(x=Sample_ID, fill = Bin_Geno), position = "fill")
+```
+
+
+```{r}
+ggplot(data=teosinte_tidy) + geom_bar(mapping = aes(x=Sample_ID, fill = Bin_Geno), position = "fill")
+```
+
+
+
+
+```{r}
+
+#DO NOT RUN THIS. It takes 40 minutes to run but I wanted to document the first way I solved the heterzygous/homozygous bit.
+
+newColNameIni = "B"
+iter = 0 #Initialized an iterator I ended up not using
+tempCol = c(NULL) #Initialize new percentage column
+tempCol2 = c(NULL) #Initialize missing value column
+
+for (col in colnames(test_gen_final)) { #Iterates through columns of dataframe
+  iter <- iter + 1 #The unused iterator iterating
+  tempName <- as.name(paste(c(newColNameIni,toString(iter)),collapse="")) #Naming new column
+  tempCol = c(NULL) #Initialize column to be added
+  for (row in rownames(test_gen_final)) { #Iterates through rows of tDatFram dataframe
+    tempString <- toString(test_gen_final[row,col]) #Converts tDatFrame values to true string
+    tempVal <- "Heterozygous" #Assumes heterozygous
+    if (substring(tempString,1,1) == "?") { #If loop comparing SNP nts
+      tempVal <- "NA" #Changes to NA if missing value
+    }
+    else if (substring(tempString,1,1) == substring(tempString,3,3)) { #If loop comparing SNP nts
+      tempVal <- "Homozygous" #Changes to homozygous if if loop true
+    }
+    tempCol = c(tempCol,tempVal) #Adds to the column to be added
+  }
+  test_gen_final[[tempName]] <- tempCol #Adds column with new name
+}
+
+##Determining the percent homozygous
+tempCol = c(NULL) #Initialize new percentage column
+tempCol2 = c(NULL) #Initialize missing value column
+for (row in rownames(test_gen_final)) { #Iterate through dataframe rows
+  countTot = 0 #Initialize total count
+  countHom = 0 #Initialize homozygous count
+  countNA = 0 #Initialize missing count
+  for (iterB in 1:iter) { #Iterate through the columns added previously
+    countTot <- countTot + 1 #Always increment total counter
+    if (test_gen_final[row,paste(c(newColNameIni,toString(iterB)),collapse="")]=="Homozygous") { #Ask if homozygous
+      countHom <- countHom + 1 #Increment homozygous count if homozygous
+    }
+    else if (test_gen_final[row,paste(c(newColNameIni,toString(iterB)),collapse="")]=="NA") { #Ask if missing
+      countNA <- countNA + 1 #Increment missing count if missing
+    }
+  }
+  tempCol <-c(tempCol, countHom/countTot) #Save ratio to percentage column
+  tempCol2 <-c(tempCol2, countNA/countTot) #Save missing percentage to a new column
+}
+test_gen_final$Percent <- tempCol #Add percentage column
+test_gen_final$Missing <- tempCol #Add missing data column
+
+##Graph
+barplot(test_gen_final$Percent, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Homozygous Alleles")
+barplot(test_gen_final$Missing, names.arg = rownames(test_gen_final), xlab = "site", ylab = "Fraction Missing Data")
+```
+
+
+
+
+
+
+>>>>>>> 7ddbec5ad2fc47e140c40c4196e2ac0099a4e0bc
